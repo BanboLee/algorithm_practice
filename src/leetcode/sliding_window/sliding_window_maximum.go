@@ -35,6 +35,7 @@ leet-code 239 滑动窗口最大值
 二、双端队列DeQueue O(N)
 1. 只需保存每个窗口最大的元素，如果新元素大于这个值，前面的就可以出去了
 2. 一直滑动就可以了
+3. 从前面出，从后面进
 */
 
 func maxSlidingWindow(nums []int, k int) []int {
@@ -77,7 +78,7 @@ func maxSlidingWindow1(nums []int, k int) []int {
 	t := 0
 	for ; t < k; t++ {
 		for !dq.empty() && nums[t] > nums[dq.head.val] {
-			dq.popFront()
+			dq.popBack()
 		}
 		dq.pushBack(t)
 	}
@@ -93,10 +94,67 @@ func maxSlidingWindow1(nums []int, k int) []int {
 
 		// 如果有个新的最大值，清理小于新值的值
 		for !dq.empty() && nums[t] > nums[dq.tail.val] {
-			dq.popFront()
+			dq.popBack()
 		}
 		dq.pushBack(t)
 		res = append(res, nums[dq.head.val])
 	}
+	return res
+}
+
+// 使用slice作为双端队列
+func maxSlidingWindow2(nums []int, k int) []int {
+	var (
+		res []int
+		dq  []int
+	)
+	for i := 0; i < len(nums); i++ {
+		// 出窗
+		if len(dq) > 0 && dq[0] == i-k {
+			dq = dq[1:]
+		}
+
+		// 将小于当前值的索引出队
+		for len(dq) > 0 && nums[i] >= nums[dq[len(dq)-1]] {
+			dq = dq[:len(dq)-1]
+		}
+
+		// 入窗
+		dq = append(dq, i)
+
+		if i >= k-1 {
+			res = append(res, nums[dq[0]])
+		}
+	}
+	return res
+}
+
+// 官方动态规划法。。。。。。。
+func maxSlidingWindow3(nums []int, k int) []int {
+	var (
+		left  = make([]int, len(nums))
+		right = make([]int, len(nums))
+		res   []int
+	)
+
+	for i := 0; i < len(nums); i++ {
+		if i%k == 0 {
+			left[i] = nums[i]
+		} else {
+			left[i] = max(left[i-1], nums[i])
+		}
+
+		j := len(nums) - 1 - i
+		if (j+1)%k == 0 {
+			right[j] = nums[j]
+		} else {
+			right[j] = max(right[j+1], nums[j])
+		}
+	}
+
+	for t := k - 1; t < len(nums); t++ {
+		res = append(res, max(left[t], right[t-k]))
+	}
+
 	return res
 }
