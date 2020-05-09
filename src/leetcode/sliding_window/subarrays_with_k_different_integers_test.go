@@ -30,7 +30,7 @@ func Test_subarraysWithKDistinct(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := subarraysWithKDistinct(tt.args.A, tt.args.K); got != tt.want {
+			if got := subarraysWithKDistinct1(tt.args.A, tt.args.K); got != tt.want {
 				t.Errorf("subarraysWithKDistinct() = %v, want %v", got, tt.want)
 			}
 		})
