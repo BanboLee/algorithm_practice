@@ -33,11 +33,9 @@ func shortestSeq(big []int, small []int) []int {
 	}
 
 	mp := make(map[int]int)
-	fmp := make(map[int]bool)
 	cnt := len(small)
 	for _, v := range small {
 		mp[v]++
-		fmp[v] = true
 	}
 
 	l, r := 0, 0
@@ -45,7 +43,7 @@ func shortestSeq(big []int, small []int) []int {
 
 	for ; r < len(big); r++ {
 		// 入窗
-		if fmp[big[r]] && mp[big[r]] > 0 {
+		if mp[big[r]] > 0 {
 			cnt--
 		}
 		mp[big[r]]--
@@ -61,14 +59,13 @@ func shortestSeq(big []int, small []int) []int {
 		}
 
 		// 出窗
-		for mp[big[l]] < 0 {
-			mp[big[l]]++
-			l++
-			if fmp[big[l-1]] && mp[big[l-1]] > 0 {
+		for l <= r && (cnt == 0 || mp[big[l]] < 0) {
+			if mp[big[l]] == 0 {
 				cnt++
 			}
+			mp[big[l]]++
+			l++
 		}
 	}
-
 	return res
 }
