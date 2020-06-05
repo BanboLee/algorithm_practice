@@ -16,6 +16,11 @@ func Test_longestWPI(t *testing.T) {
 			args{[]int{6, 6, 9}},
 			1,
 		},
+		{
+			"1",
+			args{[]int{9, 9, 6, 0, 6, 6, 9}},
+			3,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
