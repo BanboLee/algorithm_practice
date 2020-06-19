@@ -14,40 +14,31 @@ leetcode 2. 两数相加
 原因：342 + 465 = 807
 */
 
-// 溢出  雪崩
-func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
-	var v1 int64
-	var v2 int64
-	var c int64 = 1
+func addTwoNumbers1(l1 *ListNode, l2 *ListNode) *ListNode {
+	c := 0 // carry
+	head := &ListNode{-1, nil}
+	prev := head
 	for l1 != nil || l2 != nil {
-		if l1 != nil {
-			v1 += c * int64(l1.Val)
+		var v int
+		if l1 != nil && l2 != nil {
+			v = l1.Val + l2.Val + c
+			l1, l2 = l1.Next, l2.Next
+		} else if l1 == nil {
+			v = l2.Val + c
+			l2 = l2.Next
+		} else {
+			v = l1.Val + c
 			l1 = l1.Next
 		}
-		if l2 != nil {
-			v2 += c * int64(l2.Val)
-			l2 = l2.Next
-		}
-		c *= 10
+
+		c = v / 10
+		prev.Next = &ListNode{v % 10, nil}
+		prev = prev.Next
 	}
 
-	sum := v1 + v2
-	println(v1, v2, sum)
-	if sum == 0 {
-		return &ListNode{0, nil}
+	if c == 1 {
+		prev.Next = &ListNode{1, nil}
 	}
-	p := &ListNode{-1, nil}
-	c = 1
-	cur := p
-	for c <= sum {
-		cur.Next = &ListNode{int(sum / c % 10), nil}
-		cur = cur.Next
-		c *= 10
-	}
-	return p.Next
-}
 
-// TODO
-func addTwoNumbers1(l1 *ListNode, l2 *ListNode) *ListNode {
-	return nil
+	return head.Next
 }
