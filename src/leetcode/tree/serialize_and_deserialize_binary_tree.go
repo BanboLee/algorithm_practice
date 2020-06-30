@@ -35,7 +35,8 @@ leetcode 297. 二叉树的序列化与反序列化
  */
 
 type Codec struct {
-	queue []*TreeNode
+	queue   []*TreeNode
+	nodeVal []string
 }
 
 func Constructor() Codec {
@@ -43,60 +44,56 @@ func Constructor() Codec {
 }
 
 // Serializes a tree to a single string.
+// 选择一种遍历方式即可，不要用广度优先遍历，反序列化的时候会坑，最好是先序遍历
 func (this *Codec) serialize(root *TreeNode) string {
 	if root == nil {
-		return "[null]"
+		return ""
 	}
+	res := "["
 	this.queue = []*TreeNode{root}
-	s := "["
-
 	for len(this.queue) != 0 {
-		cur := this.queue[0]
-		this.queue = this.queue[1:]
+		cur := this.queue[len(this.queue)-1]
+		this.queue = this.queue[:len(this.queue)-1]
 		if cur == nil {
-			s += "null,"
+			res += "null,"
 			continue
 		} else {
-			s += strconv.Itoa(cur.Val)
+			res += strconv.Itoa(cur.Val) + ","
 		}
-		s += ","
-
-		this.queue = append(this.queue, cur.Left)
+		// 使用栈， 按先序，先压入右子树，再压如左子树
 		this.queue = append(this.queue, cur.Right)
+		this.queue = append(this.queue, cur.Left)
 	}
 
-	s = s[:len(s)-1]
-	s += "]"
-	fmt.Println(s)
-	return s
+	return res[:len(res)-1] + "]"
 }
 
 // Deserializes your encoded data to tree.
 func (this *Codec) deserialize(data string) *TreeNode {
-	data = data[1 : len(data)-1]
 	if len(data) == 0 {
 		return nil
 	}
+	data = data[1 : len(data)-1]
+	if data == "" {
+		return nil
+	}
+	this.nodeVal = strings.Split(data, ",")
+	fmt.Printf("data=%v\n", this.nodeVal)
+	return this.redeserialize()
 
-	nodes := strings.Split(data, ",")
-	this.queue = make([]*TreeNode, 0)
-	for _, node := range nodes {
-		if node == "null" {
-			this.queue = append(this.queue, nil)
-		} else {
-			val, _ := strconv.Atoi(node)
-			this.queue = append(this.queue, &TreeNode{val, nil, nil})
-		}
+}
+
+// 递归
+func (this *Codec) redeserialize() *TreeNode {
+	if this.nodeVal[0] == "null" {
+		this.nodeVal = this.nodeVal[1:]
+		return nil
 	}
 
-	for i, node := range this.queue {
-		if i*2+1 < len(this.queue) {
-			node.Left = this.queue[i*2+1]
-		}
-		if i*2+2 < len(this.queue) {
-			node.Right = this.queue[i*2+2]
-		}
-	}
-
-	return this.queue[0]
+	val, _ := strconv.Atoi(this.nodeVal[0])
+	root := &TreeNode{val, nil, nil}
+	this.nodeVal = this.nodeVal[1:]
+	root.Left = this.redeserialize()
+	root.Right = this.redeserialize()
+	return root
 }
