@@ -37,19 +37,12 @@ type unionFindSetIntMatrix1 struct {
 }
 
 func (u *unionFindSetIntMatrix1) init(M [][]int) {
-	m, n := len(M), len(M[0])
-	u.parent = make([]int, m*n)
-	u.rank = make([]int, m*n)
+	u.Count = len(M)
+	u.parent = make([]int, u.Count)
+	u.rank = make([]int, u.Count)
 
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			if M[i][j] == 1 {
-				u.parent[i*n+j] = i*n + j
-				u.Count++
-			} else {
-				u.parent[i*n+j] = -1
-			}
-		}
+	for i := range u.parent {
+		u.parent[i] = i
 	}
 }
 
@@ -85,10 +78,10 @@ func findCircleNum(M [][]int) int {
 	for i := 0; i < m; i++ {
 		for j := 0; j < n; j++ {
 			if M[i][j] == 1 {
-				M[i][j] = 0
+				ufs.union(i, j)
 			}
 		}
 	}
 
-	return
+	return ufs.Count
 }
