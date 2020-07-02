@@ -32,16 +32,17 @@ func (pq *PriorityQueue) ShiftDown(index int) {
 		return
 	}
 
+	// 需要同时比较两个儿子节点
 	for index*2+1 < len(pq.data) {
-		if !pq.cmp(pq.data[index], pq.data[index*2+1]) {
-			pq.data[index], pq.data[index*2+1] = pq.data[index*2+1], pq.data[index]
-			index = index*2 + 1
-		} else if !pq.cmp(pq.data[index], pq.data[index*2+2]) {
-			pq.data[index], pq.data[index*2+2] = pq.data[index*2+2], pq.data[index]
-			index = index*2 + 2
-		} else {
+		t := index*2 + 1
+		if t+1 < len(pq.data) && !pq.cmp(pq.data[t], pq.data[t+1]) {
+			t++
+		}
+		if pq.cmp(pq.data[index], pq.data[t]) {
 			break
 		}
+		pq.data[index], pq.data[t] = pq.data[t], pq.data[index]
+		index = t
 	}
 }
 
@@ -61,4 +62,8 @@ func (pq *PriorityQueue) Top() interface{} {
 		return nil
 	}
 	return pq.data[0]
+}
+
+func (pq *PriorityQueue) Size() int {
+	return len(pq.data)
 }

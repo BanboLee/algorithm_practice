@@ -35,7 +35,9 @@ func mergeKLists(lists []*ListNode) *ListNode {
 
 	pq := &PriorityQueue{nil, CompareListNode}
 	for _, list := range lists {
-		pq.Insert(list)
+		if list != nil {
+			pq.Insert(list)
+		}
 	}
 
 	var dummy = &ListNode{-1, nil}
