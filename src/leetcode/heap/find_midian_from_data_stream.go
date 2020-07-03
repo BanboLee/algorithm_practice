@@ -1,5 +1,7 @@
 package heap
 
+import "fmt"
+
 /*
 leetcode 295. 数据流的中位数
 链接：https://leetcode-cn.com/problems/find-median-from-data-stream
@@ -44,25 +46,22 @@ func Constructor() MedianFinder {
 }
 
 func (this *MedianFinder) AddNum(num int) {
-	// 将元素放入大的一半
 	this.lowerHeap.Insert(num)
 
-	// 将大的一半中最小的元素放入小的一半中
 	this.higherHeap.Insert(this.lowerHeap.Pop())
-
-	// 这时小的一半可能多个元素 平衡一次
-	if this.higherHeap.Size() > this.lowerHeap.Size() {
+	if this.lowerHeap.Size() < this.higherHeap.Size() {
 		this.lowerHeap.Insert(this.higherHeap.Pop())
 	}
+
+	fmt.Printf("after add %d, lowerHeap=%v, higher_heap=%v\n", num, this.lowerHeap.data, this.higherHeap.data)
 }
 
 func (this *MedianFinder) FindMedian() float64 {
-	if this.lowerHeap.Size() == this.lowerHeap.Size() {
-		if this.lowerHeap.Size() == 0 {
-			return 0
-		} else {
-			return (float64(this.higherHeap.Pop().(int)) + float64(this.lowerHeap.Pop().(int))) * 0.5
-		}
+	if this.lowerHeap.Size() == 0 && this.higherHeap.Size() == 0 {
+		return 0
 	}
-	return float64(this.higherHeap.Pop().(int))
+	if this.lowerHeap.Size() == this.higherHeap.Size() {
+		return (float64(this.higherHeap.Top().(int)) + float64(this.lowerHeap.Top().(int))) * 0.5
+	}
+	return float64(this.lowerHeap.Top().(int))
 }

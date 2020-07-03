@@ -1,7 +1,7 @@
 package heap
 
 import (
-	"demo/leetcode/algorithm"
+	"leetcode/algorithm"
 )
 
 func networkDelayTime(times [][]int, N int, K int) int {

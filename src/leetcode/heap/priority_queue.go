@@ -28,7 +28,7 @@ func (pq *PriorityQueue) Insert(v interface{}) {
 }
 
 func (pq *PriorityQueue) ShiftDown(index int) {
-	if index < 0 || index >= (len(pq.data)-1)/2 {
+	if index < 0 {
 		return
 	}
 
