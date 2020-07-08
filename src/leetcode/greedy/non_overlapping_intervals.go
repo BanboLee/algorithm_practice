@@ -1,5 +1,7 @@
 package greedy
 
+import "sort"
+
 /*
 leetcode 435. 无重叠区间
 链接：https://leetcode-cn.com/problems/non-overlapping-intervals
@@ -23,17 +25,37 @@ leetcode 435. 无重叠区间
 解释: 你不需要移除任何区间，因为它们已经是无重叠的了。
 */
 
+/*
+	如果后区间的终点在当前终点之前，直接去掉前区间，会有更大空间容纳更多区间
+	如果后区间终点和起点在当前区间终点之后，无法去掉空间
+	如果后区间的起点在当前区间终点之前并且终点在当前终点之后，使用贪心，直接去掉后区间
+*/
 func eraseOverlapIntervals(intervals [][]int) int {
 	if len(intervals) == 0 {
 		return 0
 	}
 
+	// 按起点升序排序
+	sort.Slice(intervals, func(i, j int) bool {
+		return intervals[i][0] < intervals[j][0]
+	})
+
 	ans := 0
-	index := 0
+	idx := 0
+
 	for i := 1; i < len(intervals); i++ {
-		if intervals[i][0] <= intervals[index][1] && intervals[i][1] >= intervals[index][1] {
+		// 如果下一区间的起点在当前区间之前
+		if intervals[i][0] < intervals[idx][1] {
+			// 两种情况
+			if intervals[i][1] < intervals[idx][1] {
+				// 如果当前区间的终点在下一区间终点之后， 去掉当前区间
+				idx = i
+			}
+			// 如果当前区间的终点在下一区间终点之前，去掉下一区间
 			ans++
-			index = i
+		} else {
+			// 这时两个区间不重叠，无法去掉任何一个
+			idx = i
 		}
 	}
 
