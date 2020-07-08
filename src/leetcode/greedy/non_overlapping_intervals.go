@@ -24,5 +24,18 @@ leetcode 435. 无重叠区间
 */
 
 func eraseOverlapIntervals(intervals [][]int) int {
+	if len(intervals) == 0 {
+		return 0
+	}
 
+	ans := 0
+	index := 0
+	for i := 1; i < len(intervals); i++ {
+		if intervals[i][0] <= intervals[index][1] && intervals[i][1] >= intervals[index][1] {
+			ans++
+			index = i
+		}
+	}
+
+	return ans
 }
