@@ -16,28 +16,31 @@ leetcode 34. 在排序数组中查找元素的第一个和最后一个位置
 输出: [-1,-1]
 */
 
+// 分两部分进行，找到左边边界，再找到右边界
 func searchRange(nums []int, target int) []int {
 	if len(nums) == 0 {
 		return []int{-1, -1}
 	}
 
-	l, r := 0, len(nums)-1
+	left := searchMargin(nums, target, true)
+	// 判断左边界是否正确
+	if left == len(nums) || nums[left] != target {
+		return []int{-1, -1}
+	}
+
+	return []int{left, searchMargin(nums, target, false) - 1}
+}
+
+func searchMargin(nums []int, target int, left bool) int {
+	l, r := 0, len(nums)
 	for l < r {
-		if nums[l] == target && nums[r] == target {
-			return []int{l, r}
-		}
-
-		if l == r {
-			break
-		}
-
 		mid := (l + r) / 2
-		if nums[mid] < target {
-			l = mid + 1
-		} else {
+		if nums[mid] > target || (left && target == nums[mid]) {
 			r = mid
+		} else {
+			l = mid + 1
 		}
 	}
 
-	return []int{-1, -1}
+	return l
 }
